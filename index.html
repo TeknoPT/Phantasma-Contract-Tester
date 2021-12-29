@@ -145,20 +145,22 @@
                         <div class="collapse col-md-6" id="collapseHowTo">
                             <div class="card card-body">
                                 <h5 class="card-title">How to Interact with the Contract Tester</h5>
-                                <p>Things to take in consideration before doing anything, you must choose if you are using your API, <b>Localnet</b> (Spook Running on your machine) or interacting with the <b>Testnet</b> or <b>Mainnet</b>.</p>
+                                <p>Note: Before doing anything, you must choose whether to use your API, <b>Localnet</b> (Spook Running on your machine) the official <b>Phantasma Testnet</b> or the <b>Phantasma Mainnet</b>.</p>
                                 <ol>
                                     <li>Select the desired <code>API</code>.</li>
                                     <li>Select the <code>Contract</code>, you want to test.</li>
-                                    <li>Connect to the contract by <b>Sign In</b> with <code>Poltergeist</code> or <code>Ecto</code>.</li>
-                                    <li>After Sign In to your Wallet the <b>Status</b> is still <span style="color:red">Not Connected</span>, an error must occured, reload the page and try again.</li>
-                                    <li>Select the desired method to test, and fill the parameters.</li>
-                                    <li>Make the Call <code>InvokeScript</code> or a <code>SendTransaction</code>.</li>
+                                    <li>Connect to the contract by <b>signing</b> with <code>Poltergeist</code> or <code>Ecto</code>.</li>
+                                    <li>If you receive the <b>Status</b> <span style="color:red">Not Connected</span>, after signing in using your wallet, an error must occured - if so, please reload the page and try again.</li>
+                                    <li>Select the desired method to test, and fill in the required parameters.</li>
+                                    <li>Make an <code>InvokeScript</code> or <code>SendTransaction</code> call to test vaious aspects of your contract.</li>
                                 </ol>
                                 
                                 <hr />
                                 <h6>Tips</h6>
-                                <p><code>InvokeScript or InvokeRawScript</code> are used to call the chain without changing it. (Only to get values from).</p>
-                                <p><code>SendTransaction</code> is used to call the chain when it changes something.</p>
+                                <ul>
+                                    <li><code>InvokeScript or InvokeRawScript</code> are used to call the chain without changing it - it fetches values from the chain without changing its state.</li>
+                                    <li><code>SendTransaction</code> is used to make calls to the chain resulting in a changed state.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
