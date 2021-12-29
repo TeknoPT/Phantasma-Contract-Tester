@@ -3,21 +3,20 @@ Phantasma Contract Tester.
 
 ## How to use it. 
 
-Before using the Web App, there's somethings you need to take in consideration.
-You must choose if you are using your API, Localnet (Spook Running on your machine) or interacting with the Testnet or Mainnet or Other API.
+Note: Before doing anything, you must choose whether to use your API, Localnet (Spook Running on your machine) the official Phantasma Testnet or the Phantasma Mainnet.
 
 * Select the desired ```API```.
-* Select the ```Contract```, you want to test.
-* Connect to the contract by Sign In with ```Poltergeist``` or ```Ecto```.
-* After Sign In to your Wallet the Status is still ```Not Connected```, an error must occured, reload the page and try again.
-* Select the desired method to test, and fill the parameters.
-* Make the Call ```InvokeScript``` or a ```SendTransaction```.
+* Select the ```Contract``` that you want to test.
+* Connect to the contract by signing in using ```Poltergeist``` or ```Ecto```.
+* If you receive the status ```Not Connected``` after signing in using your wallet, an error must occured - if so, please reload the page and try again.
+* Select the desired method to test, and fill in the required parameters.
+* Make an ```InvokeScript``` or ```SendTransaction``` call to test vaious aspects of you contract.
 
 <br />
 
 ### <b>Tips</b>
-```InvokeScript or InvokeRawScript``` are used to call the chain without changing it. (Only to get values from).
-```SendTransaction``` is used to call the chain when it changes something.
+* ```InvokeScript or InvokeRawScript``` are used to call the chain without changing it - it fetches values from the chain without changing its state.
+* ```SendTransaction``` is used to make calls to the chain resulting in a changed state.
 
 ### <b>License</b>
 
