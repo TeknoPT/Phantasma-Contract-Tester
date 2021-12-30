@@ -3,6 +3,8 @@ let contractSource = "http://207.148.17.86:7078/"; // http://127.0.0.1:7078/ -> 
 let allContracts = [];
 let tipAddress = "P2KBktG2MFc6zc3Gsdrt5G4EntPTDBK3WW4mVQiqvAzppFk";
 
+// let RPC = new phantasmaJS.PhantasmaAPI('seed.ghostdevs.com:7077/rpc', 'https://ghostdevs.com/getpeers.json', 'mainnet');
+
 let connected = false;
 let contractName = "";
 let contractAddress = "";
@@ -407,7 +409,7 @@ function CallContractTransaction(){
 // Get the Contract Information
 function GetContractInfo(contractName)
 {
-    let linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
+    let linkToContractSource = "https://www.google.com/search?q="+contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
@@ -429,7 +431,7 @@ function GetContractInfo(contractName)
 
 /// Load all the contracts from SPOOK/API
 async function GetAllContracts(){
-    let linkToContractSource = contractSource+"api/getChains"; 
+    let linkToContractSource = "https://www.google.com/search?q="+contractSource+"api/getChains"; 
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
