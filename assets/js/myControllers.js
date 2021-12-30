@@ -410,7 +410,7 @@ function CallContractTransaction(){
 function GetContractInfo(contractName)
 {
     let linkToContractSource = "";
-    if ( !contractSource.contains("http://127.0.0.1:7078/") )
+    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
         linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`); 
     else
         linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
@@ -423,7 +423,7 @@ function GetContractInfo(contractName)
             payload = contractName;
             contractAddress = selectedContract.address;
             console.log("Contract:",selectedContract);
-            NewMessage("API", `Fetched the Contract Info with success`);    
+            NewMessage("API", `Fetched the Contract Info with success`);
             FillSelectWithContractFunctions(selectedContract);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -437,7 +437,7 @@ function GetContractInfo(contractName)
 /// Load all the contracts from SPOOK/API
 async function GetAllContracts(){
     let linkToContractSource = "";
-    if ( !contractSource.contains("http://127.0.0.1:7078/") )
+    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
         linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"api/getChains"); 
     else 
         linkToContractSource = contractSource+"api/getChains"; 
@@ -449,11 +449,13 @@ async function GetAllContracts(){
 		success: function (response) {
             allContracts = response[0].contracts;
             contractsInfo = allContracts;
+            $("#apiStatus").html(`<span style="color:green;" class="text-wrap">Connected to <span style="color:lightgreen;">${contractSource}</span></span>`);   
             NewMessage("API", `Fetched the API Data with success`);    
             FillContractsInfo();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus, errorThrown);
+            $("#apiStatus").html(`<span style="color:red;">Not connected</span>`);   
             NewMessage("API", `Error Fetching the API Info`, "error");    
 		}
 	});
