@@ -409,7 +409,8 @@ function CallContractTransaction(){
 // Get the Contract Information
 function GetContractInfo(contractName)
 {
-    let linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
+    let linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`); 
+    console.log(linkToContractSource);
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
@@ -418,6 +419,7 @@ function GetContractInfo(contractName)
             selectedContract = response;
             payload = contractName;
             contractAddress = selectedContract.address;
+            console.log("Contract:",selectedContract);
             NewMessage("API", `Fetched the Contract Info with success`);    
             FillSelectWithContractFunctions(selectedContract);
 		},
@@ -431,7 +433,7 @@ function GetContractInfo(contractName)
 
 /// Load all the contracts from SPOOK/API
 async function GetAllContracts(){
-    let linkToContractSource = contractSource+"api/getChains"; 
+    let linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"api/getChains"); 
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
@@ -461,7 +463,7 @@ function FillContractsInfo(){
 
 // API
 function SetContractAPIURL(url){
-    contractSource = "https://proxy.jnovo.eu/redirect.php?url="+url;
+    contractSource = url;
     GetAllContracts();
 }
 
