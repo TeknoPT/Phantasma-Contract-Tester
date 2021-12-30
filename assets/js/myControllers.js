@@ -461,7 +461,7 @@ function FillContractsInfo(){
 
 // API
 function SetContractAPIURL(url){
-    contractSource = url;
+    contractSource = "https://proxy.jnovo.eu/redirect.php?"+url;
     GetAllContracts();
 }
 
