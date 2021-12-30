@@ -1,5 +1,5 @@
 // For the GetContracts
-let contractSource = "http://207.148.17.86:7078/"; // http://127.0.0.1:7078/ -> Local | http://207.148.17.86:7078/ -> Public | External -> Other
+let contractSource = "http://207.148.17.86:7078/"; // http://127.0.0.1:7078/ -> Local | http://207.148.17.86:7078/ -> Public | http://testnet.phantasma.io:7078/ -> Testnet | External -> Other
 let allContracts = [];
 let tipAddress = "P2KBktG2MFc6zc3Gsdrt5G4EntPTDBK3WW4mVQiqvAzppFk";
 
@@ -409,8 +409,11 @@ function CallContractTransaction(){
 // Get the Contract Information
 function GetContractInfo(contractName)
 {
-    let linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`); 
-    console.log(linkToContractSource);
+    let linkToContractSource = "";
+    if ( !contractSource.contains("http://127.0.0.1:7078/") )
+        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`); 
+    else
+        linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
@@ -433,7 +436,12 @@ function GetContractInfo(contractName)
 
 /// Load all the contracts from SPOOK/API
 async function GetAllContracts(){
-    let linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"api/getChains"); 
+    let linkToContractSource = "";
+    if ( !contractSource.contains("http://127.0.0.1:7078/") )
+        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"api/getChains"); 
+    else 
+        linkToContractSource = contractSource+"api/getChains"; 
+
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
