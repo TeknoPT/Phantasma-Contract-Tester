@@ -554,9 +554,14 @@ function NewMessage(title, text, type = null){
 }
 
 // Decode Information
-function DecodeToUI(info){
-    let result = phantasmaJS.phantasmaJS.decodeVMObject(info);
-    console.log(JSON.stringify(result, undefined, 4));
+function DecodeToUI(info, isToken){
+    let result = {};
+    if ( !isToken )
+        result = phantasmaJS.phantasmaJS.decodeVMObject(info);
+    else
+        result = phantasmaJS.phantasmaJS.getTokenEventData(info);
+
+    //console.log(JSON.stringify(result, undefined, 4));
     $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
 }
 
@@ -707,7 +712,8 @@ $(document).ready(function() {
     // Decode Info
     $("#decodeInfoBtn").on("click", function(){ 
         let info = $("#decodeInfo").val();
-        DecodeToUI(info);
+        let isToken = $("#decodeEvent").prop('checked');
+        DecodeToUI(info, isToken);
     })
 
     $("#hashBtn").on("click", function(){ 
