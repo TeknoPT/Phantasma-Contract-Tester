@@ -91,6 +91,18 @@
                                 <i class="fs-5 bi-terminal"></i><span class="ms-1 d-none d-sm-inline">Call Output</span> 
                             </a>
                         </li>
+
+                        <li>
+                            <a href="#contractMethodOutput" class="nav-link px-sm-0 px-2" data-bs-toggle="modal" data-bs-target="#decodeInfoModal">
+                                <i class="fs-5 bi bi-card-text"></i><span class="ms-1 d-none d-sm-inline">Decode Information</span> 
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#contractMethodOutput" class="nav-link px-sm-0 px-2" data-bs-toggle="modal" data-bs-target="#getHashInfoModal">
+                                <i class="fs-5 bi-code-square"></i><span class="ms-1 d-none d-sm-inline">Get Transaction Info by Hash</span> 
+                            </a>
+                        </li>
                     </ul>
                     <div class="dropdown py-4 mt-sm-auto ms-auto ms-sm-0 text-center mx-auto">
                         <div id="loggedOut" class="mx-auto row text-center">
@@ -258,7 +270,7 @@
                 <!-- Send / Stake Tokens -->
                 <div class="col-md-12 text-center">
                     <div class="input-group">
-                        <input type="text" class="form-control text-center" aria-label="Text input with dropdown button" placeholder="Ex: 500"> 
+                        <input type="text" id="amountSendStake" class="form-control text-center" aria-label="Text input with dropdown button" placeholder="Ex: 500"> 
                         <div class="input-group-append">
                             <select class="form-select text-center" id="symbolToken" aria-label="symbolToken">
                                 <option selected>Select a symbol</option>
@@ -367,6 +379,61 @@
         </div>
     </div>
     <!-- END Change Owner MODAL-->
+
+    <!-- Decode Info MODAL -->
+    <div class="modal fade" id="decodeInfoModal" tabindex="-1" aria-labelledby="decodeInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="decodeInfoModalLabel">Decode Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md text-center">
+                    <div class="form-group row">
+                        <label for="ownerAddress" class="col-sm-3 col-form-label">Encoded Data</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="decodeInfo" placeholder="ex: 6578616D706C65">
+                        </div>
+                    </div>
+                </div>      
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="decodeInfoBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Decode</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- END Decode Info MODAL-->
+
+    
+    <!-- Get Hash Info MODAL -->
+    <div class="modal fade" id="getHashInfoModal" tabindex="-1" aria-labelledby="getHashInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="getHashInfoModalLabel">Hash Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md text-center">
+                    <div class="form-group row">
+                        <label for="ownerAddress" class="col-sm-3 col-form-label">Hash</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="hashTxt" placeholder="ex: 953F89B34D021157D5696D4B878072963F5A90FD33EADB1728D345111C6DD12B">
+                        </div>
+                    </div>
+                </div>      
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="hashBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Decode</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- END Get Hash Info MODAL-->
 
     <!-- TIP MODAL -->
     <div class="modal fade" id="tipModal" tabindex="-1" aria-labelledby="tipModalLabel" aria-hidden="true">

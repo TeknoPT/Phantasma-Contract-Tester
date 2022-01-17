@@ -15,7 +15,10 @@ let selectedContract = {};
 let selectedMethod = {};
 
 // Start Link
-function startLink(){ link = new PhantasmaLink(contractName); }
+function startLink(){
+    console.log("Contract: "+ contractName);
+    link = new PhantasmaLink(contractName); 
+}
 
 // Login
 function loginToPhantasma(providerHint) {
@@ -87,8 +90,10 @@ function SendTokens(symbol, amount){
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
-        NewMessage("Send Tokens", `Tokens sent with success: ${amount**GetDecimals(symbol)} ${symbol}`);
-        console.log("result:",script)                
+        //let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
+        console.log(JSON.stringify(script, undefined, 4));
+        $("#contractMethodOutput").val(JSON.stringify(script, undefined, 4));
+        NewMessage("Send Tokens", `Tokens sent with success: ${amount**GetDecimals(symbol)} ${symbol}`);        
     });
 }
 
@@ -108,7 +113,8 @@ function StakeTokens(symbol, amount){
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
-        console.log("result:",script)                
+        console.log(JSON.stringify(script, undefined, 4));
+        $("#contractMethodOutput").val(JSON.stringify(script, undefined, 4));              
         NewMessage("Stake Tokens", `Tokens stake with success: ${amount**GetDecimals(symbol)} ${symbol}`);
     });
 }
@@ -129,7 +135,9 @@ function UpdateOwner(to){
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
-        console.log("result:",script)
+        let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
+        console.log(JSON.stringify(result, undefined, 4));
+        $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
         NewMessage("Update Owner", `Owner updated with success to <b>${to}</b>`);
     });
 }
@@ -195,7 +203,9 @@ function createNFTsDuplicate(){
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
-        console.log("result:",script);
+        let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
+        console.log(JSON.stringify(result, undefined, 4));
+        $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
         NewMessage("Contract Call", `NFT Duplicate Call: Call executed with sucess.`);  
     });
 }
@@ -239,7 +249,9 @@ function createNFTsUnique(){
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
-        console.log("result:",script);
+        let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
+        console.log(JSON.stringify(result, undefined, 4));
+        $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
         NewMessage("Contract Call", `NFT Unique Call: Call executed with sucess.`);  
     });
 }
@@ -407,21 +419,24 @@ function CallContractTransaction(){
 }
 
 // Get the Contract Information
-function GetContractInfo(contractName)
+function GetContractInfo(name)
 {
     let linkToContractSource = "";
     if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
-        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`); 
+        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${name}`); 
     else
-        linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${contractName}`; 
+        linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${name}`; 
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
         dataType: "json",
 		success: function (response) {
             selectedContract = response;
-            payload = contractName;
+            payload = name;
+            contractName = name;
             contractAddress = selectedContract.address;
+            LoadContract(selectedContract);
+            startLink();
             console.log("Contract:",selectedContract);
             NewMessage("API", `Fetched the Contract Info with success`);
             FillSelectWithContractFunctions(selectedContract);
@@ -538,12 +553,39 @@ function NewMessage(title, text, type = null){
     toast.show();
 }
 
+// Decode Information
+function DecodeToUI(info){
+    let result = phantasmaJS.phantasmaJS.decodeVMObject(info);
+    console.log(JSON.stringify(result, undefined, 4));
+    $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
+}
+
+function GetHashInfo(hash){ 
+    let linkToContractSource = "";
+    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
+        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getTransaction?hashText=${hash}`); 
+    else
+        linkToContractSource = contractSource+`api/getTransaction?hashText=${hash}`; 
+
+    $.ajax({
+		url: linkToContractSource,
+		type: "get",
+        dataType: "json",
+		success: function (response) {
+            $("#contractMethodOutput").val(JSON.stringify(response, undefined, 4));
+            NewMessage("API", `Fetched the Hash Info with success`);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+            NewMessage("API", `Error Fetching the Hash Info`, "error");    
+		}
+	});
+}
+
 // Jquery Main Script
 $(document).ready(function() {
 
     //LoadAllContracts();
-
-    
 
     $("#contractFunctions").on("change", function(e) {
         // Load the Method;
@@ -555,7 +597,6 @@ $(document).ready(function() {
         contractAddress = selectedContract.address;
         payload = contractName; //.toLowerCase()
         console.log("payload:",payload);
-        startLink();
     });
 
     $("#callContractMethodInvoke").on("click", function() { 
@@ -569,14 +610,14 @@ $(document).ready(function() {
     // Send Tokens Button
     $("#sendTokens").on("click", function(e) {
         let symbol = $("#symbolToken").val();
-        let amount = $("#amount").val();
+        let amount = $("#amountSendStake").val();
         SendTokens(symbol, amount);
     });
 
     // Stake Tokens Button
     $("#stakeTokens").on("click", function(e) {
         let symbol = $("#symbolToken").val();
-        let amount = $("#amount").val();
+        let amount = $("#amountSendStake").val();
         StakeTokens(symbol, amount);
     });
 
@@ -616,9 +657,8 @@ $(document).ready(function() {
         let contractName = $(this).val();
         if ( contractName != "0") {
             $("#contractNameInput").val("");
-            GetContractInfo(contractName);
             HandleLogOut();
-            startLink();
+            GetContractInfo(contractName);
         }
     });
 
@@ -631,9 +671,8 @@ $(document).ready(function() {
         {
             $("#contractSelectName").val('0').change();
             let contractName = $("#contractNameInput").val();
-            GetContractInfo(contractName);
             HandleLogOut();
-            startLink();
+            GetContractInfo(contractName);
         }
     });
 
@@ -664,4 +703,15 @@ $(document).ready(function() {
     $("#tipButton").on("click", function(){ 
         TIP( $("#tipAmount").val(), $("#tipSymbolToken").val());
     });
+
+    // Decode Info
+    $("#decodeInfoBtn").on("click", function(){ 
+        let info = $("#decodeInfo").val();
+        DecodeToUI(info);
+    })
+
+    $("#hashBtn").on("click", function(){ 
+        let hash = $("#hashTxt").val();
+        GetHashInfo(hash);
+    })
 });
