@@ -341,19 +341,22 @@ function LoadMethod(method){
     $("#methodName").val(methodInfo.name);
     $("#args").html("");
     let argsHtml = "";    
-    methodInfo.parameters.forEach(function(value, index){
-        console.log(value);
-        argsHtml += `
-        <div class="form-group row mb-2">
-            <label for="Arg-${index}" class="col-sm-2 col-form-label">${value.name} : ${value.type}</label>
-            <div class="col-sm-10 ">
-                <div class="input-group">
-                    <input type="text" class="form-control col-sm-2 contract-arg" value="${value.name}" placeholder="${value.name}">
-                    <input type="text" class="form-control col-sm contract-arg-value" placeholder="ex: value">
+    if (methodInfo.parameters != null) {
+        methodInfo.parameters.forEach(function(value, index){
+            console.log(value);
+            argsHtml += `
+            <div class="form-group row mb-2">
+                <label for="Arg-${index}" class="col-sm-2 col-form-label">${value.name} : ${value.type}</label>
+                <div class="col-sm-10 ">
+                    <div class="input-group">
+                        <input type="text" class="form-control col-sm-2 contract-arg" value="${value.name}" placeholder="${value.name}">
+                        <input type="text" class="form-control col-sm contract-arg-value" placeholder="ex: value">
+                    </div>
                 </div>
-            </div>
-        </div>`;
-    });
+            </div>`;
+        });
+    }
+    
 
     $("#args").html(argsHtml);
 }
@@ -364,7 +367,7 @@ function CallContractInvoke(){
         return NewMessage("Phantasma Link", `Not connected to a wallet.`, "error");
 
     let contractName = String(selectedContract.name);
-    let methodName = String(selectedMethod.name);
+    let methodName = String($("#methodName").val());
     let address = String(link.account.address);
 
     let argParams = [];
@@ -382,8 +385,19 @@ function CallContractInvoke(){
     link.invokeRawScript("main", myScript, payload, (script) =>
     {
         console.log("result:",script);
-        let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
-        $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
+        let htmlResponse = "";
+        if (script.results != null )
+            for (let i = 0; i < script.results.length; i++)
+            {
+                let result = phantasma.phantasmaJS.decodeVMObject(script.results[i]);
+                htmlResponse += JSON.stringify(result, undefined, 4);
+            }
+        else
+        { 
+            let result = phantasma.phantasmaJS.decodeVMObject(script.result);
+            htmlResponse+= JSON.stringify(result, undefined, 4);
+        }
+        $("#contractMethodOutput").val(htmlResponse);
         NewMessage("Contract Call", `InvokeScript: Call executed with sucess.`);  
     });
 }
@@ -396,6 +410,10 @@ function CallContractTransaction(){
     let contractName = String(selectedContract.name);
     let methodName = String(selectedMethod.name);
     let address = String(link.account.address);
+    let nullAddr = "S1111111111111111111111111111111111";
+    let gasPrice = 100000;
+    let gasLimit = 9999;
+
 
     let argParams = [];
 
@@ -404,14 +422,14 @@ function CallContractTransaction(){
     });
     
     var sb = new ScriptBuilder()
-                .allowGas(address)
+                .allowGas(address, nullAddr, gasPrice, gasLimit)
                 .callContract(contractName, methodName, argParams);
     var myScript = sb.spendGas(address).endScript();
 
     link.sendTransaction("main", myScript, payload, (script) =>
     {
         console.log("result:", script);
-        let result = phantasmaJS.phantasmaJS.decodeVMObject(script.result);
+        let result = phantasma.phantasmaJS.decodeVMObject(script.result);
         console.log(JSON.stringify(result, undefined, 4));
         $("#contractMethodOutput").val(JSON.stringify(result, undefined, 4));
         NewMessage("Contract Call", `SendTransaction: Call executed with sucess.`);  
@@ -422,10 +440,11 @@ function CallContractTransaction(){
 function GetContractInfo(name)
 {
     let linkToContractSource = "";
-    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
-        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getContract?chainAddressOrName=main&contractName=${name}`); 
-    else
-        linkToContractSource = contractSource+`api/getContract?chainAddressOrName=main&contractName=${name}`; 
+    //if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
+    //    linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`getContract?chainAddressOrName=main&contractName=${name}`); 
+    //else
+        linkToContractSource = contractSource+`getContract?chainAddressOrName=main&contractName=${name}`; 
+    
     $.ajax({
 		url: linkToContractSource,
 		type: "get",
@@ -452,10 +471,10 @@ function GetContractInfo(name)
 /// Load all the contracts from SPOOK/API
 async function GetAllContracts(){
     let linkToContractSource = "";
-    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
-        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"api/getChains"); 
-    else 
-        linkToContractSource = contractSource+"api/getChains"; 
+    //if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
+    //    linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+"getChains"); 
+    //else 
+        linkToContractSource = contractSource+"getChains"; 
 
     $.ajax({
 		url: linkToContractSource,
@@ -567,10 +586,10 @@ function DecodeToUI(info, isToken){
 
 function GetHashInfo(hash){ 
     let linkToContractSource = "";
-    if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
-        linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`api/getTransaction?hashText=${hash}`); 
-    else
-        linkToContractSource = contractSource+`api/getTransaction?hashText=${hash}`; 
+    //if ( contractSource.includes("http://testnet.phantasma.io:7078/") || contractSource.includes("http://207.148.17.86:7078/") )
+    //    linkToContractSource = "https://proxy.jnovo.eu/redirect.php?url="+btoa(contractSource+`getTransaction?hashText=${hash}`); 
+    //else
+        linkToContractSource = contractSource+`getTransaction?hashText=${hash}`; 
 
     $.ajax({
 		url: linkToContractSource,

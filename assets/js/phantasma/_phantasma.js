@@ -254,12 +254,6 @@ class ScriptBuilder {
 			let bytes = this.rawString(obj.toString());
 			this.emitLoadEx(reg, bytes, this.VMType_String());
 		}
-        else
-		if (typeof obj === 'struct')
-		{
-			let bytes = this.rawString(obj.toString());
-			this.emitLoadEx(reg, bytes, this.VMType_Struct());
-		}
 		else
 		{
 			throw "unsupported or uniplemented type";
@@ -382,7 +376,6 @@ class PhantasmaLink {
         this.version = version;
         this.platform = platform;
         this.token = null;
-        this.providerHint = providerHint;
         this.createSocket(providerHint, false);
     }
     resume(token, wallet, nexus, version, platform, callback, providerHint = "") {
@@ -392,7 +385,6 @@ class PhantasmaLink {
         this.version = version;
         this.platform = platform;
         this.onLogin = callback;
-        this.providerHint = providerHint;
         this.createSocket(providerHint, true);
     }
     fetchAccount() {
@@ -448,7 +440,7 @@ class PhantasmaLink {
                     let that = this;
                     setTimeout(function () {
                         that.createSocket(providerHint, isResume);
-                    }, 1500);
+                    }, 500);
                 }
                 return;
             }
@@ -478,8 +470,7 @@ class PhantasmaLink {
                         that.setLinkMsg("Authorized, obtaining account info...");
                         that.fetchAccount();
                     } else {
-                        that.setLinkMsg("Authorization failed - please ensure you have your wallet open and are logged in.");
-                        that.hideModal();
+                        that.setLinkMsg("Authorization failed...");
                         that.onLogin(false);
                         return;
                     }
@@ -488,10 +479,11 @@ class PhantasmaLink {
         };
         this.socket.onmessage = function (event) {
             console.log("Got Phantasma Link answer: " + event.data);
+            //console.log("My Event - ", JSON.parse(event));
             let obj = JSON.parse(event.data);
             let temp = that.requestCallback;
             if (temp == null) {
-                that.setLinkMsg("Loading your liquidity");
+                that.setLinkMsg("Something bad happened...");
                 return;
             }
             that.requestCallback = null;
@@ -548,7 +540,6 @@ class PhantasmaLink {
         } else {
             requestStr = this.nexus + "/" + requestStr;
         }
-        
         this.sendLinkRequest("signTx/" + requestStr, function (result) {
             that.hideModal();
             callback(result);
@@ -599,12 +590,12 @@ class PhantasmaLink {
 
 		let requestStr = chain + "/" + script;
         if (this.version >= 2) {
-            requestStr = requestStr;
+            requestStr = requestStr  ;
         } else {
             requestStr = this.nexus + "/" + requestStr;
         }
 
-        this.sendLinkRequest('invokeScript/' + requestStr, function(result){
+		this.sendLinkRequest('invokeScript/' + requestStr, function(result){
 			//that.hideModal();
 			callback(result);
 		});
